@@ -13,4 +13,7 @@ def getTitle(request, title):
         "content": content
         })
     else:
-        return HttpResponse("Entry not found")
+        return render(request, "entryPage/title.html", {
+        "title": "Error 404",
+        "content": "page not found"
+        })
