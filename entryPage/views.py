@@ -8,6 +8,9 @@ from encyclopedia import util
 def getTitle(request, title):
     content = util.get_entry(title)
     if(content):
-        return HttpResponse(content)
+        return render(request, "entryPage/title.html", {
+        "title": title,
+        "content": content
+        })
     else:
         return HttpResponse("Entry not found")
