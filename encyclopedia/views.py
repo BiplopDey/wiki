@@ -1,6 +1,8 @@
+from django.forms import widgets
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django import forms
 
 from . import util
 from entryPage import views
@@ -26,3 +28,31 @@ def search(request):
             return render(request, "encyclopedia/index.html", {
                 "entries": substring
             })
+
+class Page(forms.Form):
+    title = forms.CharField(label="Title:")
+    content = forms.CharField(widget=forms.Textarea)
+
+def newPage(request):
+    if request.method == "POST":
+        page = Page(request.POST)
+        if page.is_valid():
+            title = page.cleaned_data["title"]
+            if util.get_entry(title):
+                return render(request, "entryPage/title.html", {
+                    "title": "Error",
+                    "content": "The page already exists"
+                })
+            else:
+                content = page.cleaned_data["content"]
+                util.save_entry(title, content)
+                return HttpResponseRedirect(reverse("title", args=(title,)))
+                
+        else:
+            return render(request, "encyclopedia/add.html", {
+                'page': page
+            })
+    
+    return render(request,"encyclopedia/add.html",{
+            'page': Page()
+    })
