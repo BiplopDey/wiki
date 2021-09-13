@@ -3,6 +3,7 @@ from django.http.response import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django import forms
+from markdown2 import Markdown
 
 from . import util
 
@@ -87,16 +88,19 @@ def edit(request, title):
             'title': title
         })
 
-
 def getTitle(request, title):
     content = util.get_entry(title)
     if(content):
+        content_HTML = Markdown().convert(content)#convierte md en html
         return render(request, "encyclopedia/title.html", {
         "title": title,
-        "content": content
+        # luego en entry.html para que dentro del corchete compile html 
+        # y no nos muestre raw html se pone {{content|safe}}
+        "content": content_HTML
         })
     else:   
         return render(request, "encyclopedia/error.html", {
         "title": "Error 404",
         "content": "page not found"
         })
+
