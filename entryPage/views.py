@@ -14,7 +14,7 @@ def getTitle(request, title):
         "content": content
         })
     else:   
-        return render(request, "entryPage/title.html", {
+        return render(request, "encyclopedia/error.html", {
         "title": "Error 404",
         "content": "page not found"
         })

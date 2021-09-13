@@ -39,7 +39,7 @@ def newPage(request):
         if page.is_valid():
             title = page.cleaned_data["title"]
             if util.get_entry(title):
-                return render(request, "entryPage/title.html", {
+                return render(request, "encyclopedia/error.html", {
                     "title": "Error",
                     "content": "The page already exists"
                 })
@@ -56,3 +56,34 @@ def newPage(request):
     return render(request,"encyclopedia/add.html",{
             'page': Page()
     })
+    
+class EditPageForm(forms.Form):
+    content = forms.CharField(widget=forms.Textarea)
+
+def edit(request, title):
+    if request.method == "POST":
+        page = EditPageForm(request.POST)
+        if page.is_valid():
+            content = page.cleaned_data["content"]
+            util.save_entry(title, content)
+            return HttpResponseRedirect(reverse("title", args=[title]))
+        else:
+            #messages.error(request, f'Editing form not valid, please try again!')
+            return render(request, "encyclopedia/edit.html",{
+                'page': page,
+                'title': title
+                })
+    # si se accede del entry page
+    elif request.method == "GET":
+        # si no existe la pag
+        content = util.get_entry(title)
+        if ( content == None):
+            return render(request, "encyclopedia/error.html", {
+            "title": "Error 404",
+            "content": "page not found"
+            })
+
+        return render(request, "encyclopedia/edit.html",{
+            'page': EditPageForm(initial={'content': content}),
+            'title': title
+        })
