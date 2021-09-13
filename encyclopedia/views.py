@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django import forms
 from markdown2 import Markdown
+import random
 
 from . import util
 
@@ -104,3 +105,6 @@ def getTitle(request, title):
         "content": "page not found"
         })
 
+def randomPage(request):
+    title = random.choice(util.list_entries())
+    return HttpResponseRedirect(reverse('title',args=(title,))) 
