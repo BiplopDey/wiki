@@ -5,7 +5,6 @@ from django.urls import reverse
 from django import forms
 
 from . import util
-from entryPage import views
 
 def index(request):
     return render(request, "encyclopedia/index.html", {
@@ -86,4 +85,18 @@ def edit(request, title):
         return render(request, "encyclopedia/edit.html",{
             'page': EditPageForm(initial={'content': content}),
             'title': title
+        })
+
+
+def getTitle(request, title):
+    content = util.get_entry(title)
+    if(content):
+        return render(request, "encyclopedia/title.html", {
+        "title": title,
+        "content": content
+        })
+    else:   
+        return render(request, "encyclopedia/error.html", {
+        "title": "Error 404",
+        "content": "page not found"
         })
